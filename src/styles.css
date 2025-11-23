@@ -1,0 +1,253 @@
+/* Global base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  background-color: #fff;
+  overflow-x: hidden;
+}
+
+/* Header / Navbar */
+.header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.logo {
+  height: 65px;
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+.navbar-nav .nav-link {
+  font-weight: 500;
+  color: #333 !important;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #ff5e62 !important;
+}
+
+.navbar-nav .nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: linear-gradient(45deg, #ff914d, #ff5e62);
+  transition: width 0.3s;
+}
+
+.navbar-nav .nav-link:hover::after {
+  width: 100%;
+}
+
+/* Toggler sempre visível em navbar clara */
+.navbar-light .navbar-toggler {
+  border-color: transparent;
+}
+
+.navbar-light .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23333' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0,0,0,.55)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Botões (maior especificidade para vencer bootstrap) */
+body .btn {
+  border-radius: 50px;
+  padding: 10px 25px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+body .btn-primary {
+  background: linear-gradient(45deg, #ff914d, #ff5e62) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+body .btn-outline-primary {
+  border: 2px solid #ff5e62 !important;
+  color: #ff5e62 !important;
+  background: transparent !important;
+}
+
+body .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 94, 98, 0.4);
+}
+
+/* Hero */
+.hero {
+  position: relative;
+  height: 90vh;
+  background: linear-gradient(135deg, #ff914d, #ff5e62);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  z-index: 1;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  font-weight: 700;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
+
+/* Offset para âncora #produtos não ficar escondida atrás do header */
+#produtos {
+  scroll-margin-top: 96px;
+}
+
+/* Cards (maior especificidade) */
+body .card {
+  border: none;
+  border-radius: 15px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+body .card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+body .card img {
+  border-radius: 15px 15px 0 0;
+  height: 250px;
+  object-fit: cover;
+}
+
+body .card-body {
+  padding: 20px;
+}
+
+/* Offcanvas */
+.offcanvas-header {
+  border-bottom: 1px solid #ddd;
+}
+
+/* Lista do carrinho */
+.list-group-item {
+  border: none;
+  border-bottom: 1px solid #eee;
+}
+
+/* Footer */
+.footer {
+  background: linear-gradient(135deg, #ff914d, #ff5e62);
+}
+
+.footer .social a {
+  color: white;
+  font-size: 1.5rem;
+  margin: 0 10px;
+  transition: 0.3s;
+}
+
+.footer .social a:hover {
+  color: #ffe0d0;
+}
+
+/* Avatar e Dropdown do Usuário (Home) */
+.avatar-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 6px; /* levemente mais à esquerda */
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid #e5e7eb;
+  background: #f3f4f6;
+}
+
+/* ÚNICA definição do dropdown: z-index alto */
+.user-dropdown {
+  position: absolute;
+  right: 52px;
+  top: 100%;
+  margin-top: 8px;
+  width: 240px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, .08);
+  padding: 10px;
+  z-index: 10000;
+}
+
+.dropdown-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 8px;
+  color: #374151;
+  text-decoration: none;
+}
+
+.dropdown-item:hover {
+  background: #f3f4f6;
+}
+
+.text-danger {
+  color: #dc2626 !important;
+}
+
+/* Navbar acima do hero e com overflow visível */
+.navbar.header {
+  position: relative;
+  z-index: 9000;
+}
+
+.navbar.header .container {
+  position: relative;
+  z-index: 9500;
+  overflow: visible;
+}
+
+/* Carrinho sempre por cima do dropdown e do banner */
+.offcanvas {
+  z-index: 13000 !important;
+}
+
+.offcanvas-backdrop {
+  z-index: 12000 !important;
+}
+
+/* Garantir que nada do header corte o dropdown */
+.header, .header * {
+  overflow: visible;
+}

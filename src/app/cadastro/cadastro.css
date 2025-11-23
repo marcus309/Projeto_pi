@@ -1,0 +1,186 @@
+/* ===== Escopo e paleta (coerente com Login/Contato) ===== */
+:host {
+  --nav-h: 72px;
+  display: block;
+  min-height: 100svh;
+  font-family: Arial, Helvetica, sans-serif;
+  background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+  color: #333;
+}
+
+/* ===== Navbar fixa ===== */
+.navbar {
+  width: 100%;
+  padding: 12px 30px;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 1000;
+}
+.nav-left { display: flex; align-items: center; gap: 10px; }
+.nav-logo { width: 40px; height: auto; }
+.brand { font-weight: 700; font-size: 18px; color: #5a3d2b; }
+.nav-right { display: flex; gap: 15px; margin-left: 40px; }
+.nav-btn {
+  padding: 8px 16px; border-radius: 8px; text-decoration: none; font-weight: bold; color: #fff;
+  background: linear-gradient(to right, #ff9a76, #ff6a3d); transition: 0.3s;
+}
+.nav-btn:hover { opacity: 0.85; }
+
+/* ===== Área útil centralizada abaixo da navbar ===== */
+.page {
+  padding-top: var(--nav-h);
+  min-height: calc(100svh - var(--nav-h));
+  display: grid;
+  place-items: center;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+/* ===== Card de cadastro ===== */
+.quadrado2 {
+  width: 500px;
+  max-width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 40px 32px;
+  border-radius: 18px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+  animation: fadeIn 0.8s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.quadrado2 h1 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* ===== Formulário ===== */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+label {
+  text-align: left;
+  font-size: 14px;
+  color: #444;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  padding: 10px 40px 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  outline: none;
+  font-size: 14px;
+  transition: 0.25s ease;
+  background: #f9f9f9;
+}
+
+/* Ícones nos campos (email e senha) */
+input[type="email"] {
+  background: #f9f9f9 url('https://cdn-icons-png.flaticon.com/512/1828/1828479.png') no-repeat 96% center;
+  background-size: 18px;
+}
+input[type="password"] {
+  background: #f9f9f9 url('https://cdn-icons-png.flaticon.com/512/3064/3064197.png') no-repeat 96% center;
+  background-size: 18px;
+}
+
+input:focus {
+  border-color: #ff914d;
+  box-shadow: 0 0 0 4px rgba(255,145,77,0.18);
+  background-color: #fff;
+}
+
+/* ===== Botão ===== */
+button {
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(45deg, #ff914d, #ff5e62);
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+button::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -75px;
+  width: 50px; height: 100%;
+  background: rgba(255,255,255,0.4);
+  transform: skewX(-20deg);
+  transition: 0.5s;
+}
+button:hover::after { left: 125%; }
+button:hover { background: linear-gradient(45deg, #ff5e62, #ff914d); }
+
+/* ===== Link para login — AGORA EM LARANJA ===== */
+.possui-login { margin: 6px 0 4px; }
+.possui-login .login { text-align: center; font-size: 14px; }
+.possui-login .login a,
+.text-primary {
+  color: #ff5e62;            /* laranja padrão */
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+.possui-login .login a:hover,
+.text-primary:hover {
+  color: #ff914d;            /* laranja claro no hover */
+  text-decoration: underline;
+  text-shadow: 0 0 8px rgba(255, 145, 77, 0.25);
+}
+.possui-login .login a:focus-visible,
+.text-primary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255,145,77,0.35);
+  border-radius: 6px;
+}
+
+/* ===== Responsivo ===== */
+@media (max-width: 480px) {
+  :host { --nav-h: 64px; }
+  .quadrado2 { padding: 28px 24px; border-radius: 14px; }
+}
+
+/* Link "Faça login aqui" em laranja, cobrindo todos os estados */
+.possui-login .login a,
+.possui-login .login a:link,
+.possui-login .login a:visited,
+.text-primary,
+.text-primary:link,
+.text-primary:visited {
+  color: #ff5e62 !important;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.possui-login .login a:hover,
+.text-primary:hover {
+  color: #ff914d !important;
+  text-decoration: underline;
+  text-shadow: 0 0 8px rgba(255, 145, 77, 0.25);
+}
+
+.possui-login .login a:active,
+.text-primary:active {
+  color: #ff7a4d !important;
+}

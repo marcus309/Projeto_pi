@@ -1,0 +1,130 @@
+
+<div class="d-flex admin-root">
+
+  
+  <aside class="sidebar bg-dark text-white p-3">
+    <h4 class="text-center mb-4">Pura Essência</h4>
+    <ul class="nav flex-column">
+      <li class="nav-item"><a class="nav-link active" href="#">Produtos</a></li>
+      <li class="nav-item"><a class="nav-link text-white-50" aria-disabled="true">Pedidos</a></li>
+      <li class="nav-item"><a class="nav-link text-white-50" aria-disabled="true">Clientes</a></li>
+      <li class="nav-item"><a class="nav-link text-white-50" routerLink="/">Voltar à loja</a></li>
+    </ul>
+  </aside>
+
+  
+  <main class="flex-grow-1 p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h3 class="fw-bold">Gerenciar Produtos</h3>
+      <button class="btn btn-primary" (click)="abrirNovo()">+ Novo Produto</button>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Imagem</th>
+            <th>Nome</th>
+            <th>Preço</th>
+            <th style="width:180px;">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of produtos">
+            <td>{{ p.id }}</td>
+            <td>
+              <img
+                [src]="p.img"
+                [alt]="p.nome"
+                style="width:60px;height:60px;object-fit:cover;border-radius:8px;"
+                (error)="onImgError($event)">
+            </td>
+            <td>{{ p.nome }}</td>
+            <td>{{ p.preco | currency:'BRL':'symbol':'1.2-2' }}</td>
+            <td>
+              <button class="btn btn-sm btn-warning me-2" (click)="editarProduto(p.id)">Editar</button>
+              <button class="btn btn-sm btn-danger" (click)="excluirProduto(p.id)">Excluir</button>
+            </td>
+          </tr>
+          <tr *ngIf="produtos.length === 0">
+            <td colspan="5" class="text-center text-muted">Nenhum produto cadastrado.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+
+<div *ngIf="showModal" class="modal d-block" tabindex="-1" aria-modal="true" role="dialog" style="z-index:1055;">
+  <div class="modal-dialog">
+    <form class="modal-content" *ngIf="produtoForm" [formGroup]="produtoForm" (ngSubmit)="salvarProduto($event)" novalidate>
+      <div class="modal-header">
+        <h5 class="modal-title">{{ formId ? 'Editar Produto' : 'Adicionar Produto' }}</h5>
+        <button type="button" class="btn-close" (click)="fecharModal()" aria-label="Fechar"></button>
+      </div>
+
+      <div class="modal-body">
+        
+        <div class="mb-3">
+          <label class="form-label">Nome</label>
+          <input type="text"
+                 class="form-control"
+                 formControlName="nome"
+                 placeholder="Ex: Versace Eros"
+                 [class.is-invalid]="nome.invalid && (nome.dirty || nome.touched)">
+          <div class="invalid-feedback" *ngIf="nome.errors && (nome.dirty || nome.touched)">
+            <div *ngIf="nome.errors['required']">Nome é obrigatório.</div>
+            <div *ngIf="nome.errors['minlength']">Mínimo de 3 caracteres.</div>
+          </div>
+        </div>
+
+        
+        <div class="mb-3">
+          <label class="form-label">Preço</label>
+          <input type="number"
+                 class="form-control"
+                 formControlName="preco"
+                 required
+                 step="0.01"
+                 min="0"
+                 placeholder="Ex: 399.90"
+                 [class.is-invalid]="preco.invalid && (preco.dirty || preco.touched)">
+          <div class="invalid-feedback" *ngIf="preco.errors && (preco.dirty || preco.touched)">
+            <div *ngIf="preco.errors['required']">Preço é obrigatório.</div>
+            <div *ngIf="preco.errors['min']">O valor deve ser maior ou igual a 0.</div>
+          </div>
+        </div>
+
+        
+        <div class="mb-3">
+          <label class="form-label">URL da Imagem</label>
+          <input type="text"
+                 class="form-control"
+                 formControlName="img"
+                 placeholder="assets/images/eros.png | https://.../foto.jpg"
+                 [class.is-invalid]="img.invalid && (img.dirty || img.touched)">
+          <small class="text-muted">Use assets/... ou http(s):// e extensão png/jpg/jpeg/webp/gif</small>
+          <div class="invalid-feedback" *ngIf="img.errors && (img.dirty || img.touched)">
+            <div *ngIf="img.errors['required']">URL da imagem é obrigatória.</div>
+            <div *ngIf="img.errors['pattern']">Caminho inválido. Verifique a extensão e o prefixo.</div>
+          </div>
+
+          <div class="mt-2" *ngIf="img.value">
+            <img [src]="img.value" alt="Prévia"
+                 style="width:80px;height:80px;object-fit:cover;border:1px solid #eee;border-radius:8px;"
+                 (error)="onImgError($event)">
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="fecharModal()">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="produtoForm.invalid">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div *ngIf="showModal" class="modal-backdrop fade show" style="z-index:1050;"></div>

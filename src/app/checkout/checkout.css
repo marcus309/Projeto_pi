@@ -1,0 +1,164 @@
+/* src/app/checkout/checkout.css */
+
+.checkout-root {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #fce2cf, #f9c6b1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Logo */
+.logo {
+    position: absolute;
+    top: 15px;
+    left: 25px;
+    width: 180px;
+    height: auto;
+}
+
+/* Layout principal */
+.quadrado {
+    width: 750px;
+    min-height: 550px;
+    background-color: #ff914d;
+    display: flex;
+    justify-content: flex-end;
+    align-items: stretch;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+.left-side {
+    width: 290px;
+    background: linear-gradient(45deg, #ff5e62, #ff914d);
+    color: #fff;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Cards de resumo */
+.product-card {
+    background: rgba(255,255,255,0.08);
+    padding: 14px;
+    border-radius: 12px;
+    backdrop-filter: blur(2px);
+}
+
+.summary {
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.note {
+    font-size: 13px;
+    color: #030303;
+    margin-top: 6px;
+}
+
+/* Formulário */
+.quadrado2 {
+    width: 460px;
+    background-color: #fff;
+    padding: 40px 35px;
+    box-sizing: border-box;
+}
+
+h1 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 26px;
+    color: #222;
+    text-align: center;
+    font-weight: 600;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+label {
+    font-weight: 600;
+    font-size: 14px;
+    color: #444;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 15px;
+    transition: 0.2s;
+}
+
+input:focus {
+    border-color: #f4a261;
+    outline: none;
+    box-shadow: 0 0 4px rgba(244, 162, 97, 0.5);
+}
+
+button {
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(45deg, #ff914d, #ff5e62);
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -75px;
+    width: 50px;
+    height: 100%;
+    background: rgba(255,255,255,0.4);
+    transform: skewX(-20deg);
+    transition: 0.5s;
+}
+
+button:hover::after {
+    left: 125%;
+}
+
+button:hover {
+    background: linear-gradient(45deg, #ff5e62, #ff914d);
+}
+
+/* Grid auxiliar */
+.two-cols {
+    display: flex;
+    gap: 12px;
+}
+
+.small {
+    flex: 1;
+}
+
+.linha {
+    margin: 12px 0;
+    border: none;
+    border-top: 1px solid #eee;
+}
+
+/* Responsividade */
+@media (max-width: 780px) {
+    .quadrado { flex-direction: column; width: 92%; }
+    .left-side { width: 100%; flex-direction: row; overflow-x: auto; }
+    .quadrado2 { width: 100%; }
+}
