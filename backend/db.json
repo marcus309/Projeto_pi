@@ -94,6 +94,13 @@
       "email": "aaaa@gmail.com",
       "senha": "aaaaaa",
       "tipo": "cliente"
+    },
+    {
+      "id": "89ac",
+      "nome": "asasdada",
+      "email": "dadad@gmail.com",
+      "senha": "222222",
+      "tipo": "cliente"
     }
   ]
 }
