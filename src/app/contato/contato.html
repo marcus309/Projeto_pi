@@ -1,0 +1,93 @@
+
+<nav class="navbar">
+  <div class="nav-left">
+   
+    <img src="images/logo.png" alt="Logo Pura Essência" class="nav-logo">
+    <span class="brand">Pura Essência</span>
+  </div>
+  <div class="nav-right">
+    <a class="nav-btn" routerLink="/">Menu</a>
+    <a class="nav-btn" routerLink="/contato">Contato</a>
+  </div>
+</nav>
+
+<main class="container">
+  <section class="form-card">
+    <h2>Entre em Contato</h2>
+    <p>Tem alguma dúvida, sugestão ou quer falar com a gente? Preencha o formulário abaixo:</p>
+
+    <form [formGroup]="formulario" (ngSubmit)="onSubmit()" novalidate>
+
+      
+      <div class="form-group">
+        <label for="nome">Nome</label>
+        <input
+          id="nome"
+          type="text"
+          class="form-control"
+          formControlName="nome"
+          placeholder="Digite seu nome"
+          [class.is-invalid]="nome.invalid && (nome.dirty || nome.touched)">
+
+        <div class="invalid-feedback" *ngIf="nome.errors && (nome.dirty || nome.touched)">
+          <div *ngIf="nome.errors['required']">Nome é obrigatório.</div>
+          <div *ngIf="nome.errors['minlength']">Mínimo de 3 caracteres.</div>
+        </div>
+      </div>
+
+      
+      <div class="form-group">
+        <label for="email">E-mail</label>
+        <input
+          id="email"
+          type="email"
+          class="form-control"
+          formControlName="email"
+          placeholder="Digite seu e-mail"
+          [class.is-invalid]="email.invalid && (email.dirty || email.touched)">
+
+        <div class="invalid-feedback" *ngIf="email.errors && (email.dirty || email.touched)">
+          <div *ngIf="email.errors['required']">E-mail é obrigatório.</div>
+          <div *ngIf="email.errors['email']">Informe um e-mail válido.</div>
+        </div>
+      </div>
+
+      
+      <div class="form-group">
+        <label for="mensagem">Mensagem</label>
+        <textarea
+          id="mensagem"
+          rows="5"
+          class="form-control"
+          formControlName="mensagem"
+          placeholder="Escreva sua mensagem"
+          [class.is-invalid]="mensagem.invalid && (mensagem.dirty || mensagem.touched)"></textarea>
+
+        <div class="invalid-feedback" *ngIf="mensagem.errors && (mensagem.dirty || mensagem.touched)">
+          <div *ngIf="mensagem.errors['required']">Mensagem é obrigatória.</div>
+          <div *ngIf="mensagem.errors['minlength']">Mínimo de 10 caracteres.</div>
+          <div *ngIf="mensagem.errors['maxlength']">Máximo de 500 caracteres.</div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-enviar" [disabled]="formulario.invalid">Enviar Mensagem</button>
+    </form>
+  </section>
+
+  <aside class="info-card">
+    <h3>Fale Conosco</h3>
+    <p><strong>Endereço:</strong> Av. das Fragrâncias, 123 - São Paulo/SP</p>
+    <p><strong>Telefone:</strong> (11) 99999-9999</p>
+    <p><strong>Email:</strong> contato@puraessencia.com</p>
+
+    <div class="redes">
+      <a href="#">🌸 Instagram</a>
+      <a href="#">💌 Facebook</a>
+      <a href="#">✨ WhatsApp</a>
+    </div>
+  </aside>
+</main>
+
+<footer>
+  <p>© 2025 Pura Essência - Todos os direitos reservados.</p>
+</footer>

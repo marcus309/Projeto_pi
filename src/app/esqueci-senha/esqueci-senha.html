@@ -1,0 +1,30 @@
+
+<nav class="navbar">
+  <div class="nav-left">
+    <img src="/images/logo.png" alt="Logo Pura Essência" class="nav-logo">
+    <span class="brand">Pura Essência</span>
+  </div>
+  <div class="nav-right">
+    <a class="nav-btn" routerLink="/">Menu</a>
+    <a class="nav-btn" routerLink="/contato">Contato</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="quadrado">
+    <div class="quadrado2">
+      <h1>Recuperar Senha</h1>
+      <p>Digite seu e-mail abaixo e enviaremos instruções para redefinir sua senha.</p>
+
+      <form (submit)="onSubmit($event)" novalidate class="form-stack">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="seu@email" required>
+        <button type="submit">Enviar</button>
+      </form>
+
+      <p style="margin-top:10px; text-align:center;">
+        <a routerLink="/login">Voltar ao login</a>
+      </p>
+    </div>
+  </div>
+</div>

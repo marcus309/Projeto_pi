@@ -1,0 +1,90 @@
+
+<nav class="navbar">
+  <div class="nav-left">
+    <img src="images/logo.png" alt="Logo Pura Essência" class="nav-logo">
+    <span class="brand">Pura Essência</span>
+  </div>
+  <div class="nav-right">
+    <a class="nav-btn" routerLink="/">Menu</a>
+    <a class="nav-btn" routerLink="/contato">Contato</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="quadrado2">
+    <h1>Crie sua Conta</h1>
+
+    <div *ngIf="errorMsg" class="error-box" role="alert">{{ errorMsg }}</div>
+
+    <form [formGroup]="formulario" (ngSubmit)="onSubmit()" novalidate>
+     
+      <label for="nome">Nome:</label>
+      <input
+        id="nome"
+        type="text"
+        class="form-control"
+        formControlName="nome"
+        placeholder="Seu nome completo"
+        [class.is-invalid]="nome.invalid && (nome.dirty || nome.touched)">
+      <div class="invalid-feedback" *ngIf="nome.errors && (nome.dirty || nome.touched)">
+        <div *ngIf="nome.hasError('required')">Nome é obrigatório.</div>
+        <div *ngIf="nome.hasError('minlength')">Mínimo de 3 caracteres.</div>
+      </div>
+
+      
+      <label for="email">E-mail:</label>
+      <input
+        id="email"
+        type="email"
+        class="form-control"
+        formControlName="email"
+        placeholder="seu@email"
+        [class.is-invalid]="email.invalid && (email.dirty || email.touched)">
+      <div class="invalid-feedback" *ngIf="email.errors && (email.dirty || email.touched)">
+        <div *ngIf="email.hasError('required')">E-mail é obrigatório.</div>
+        <div *ngIf="email.hasError('email')">Informe um e-mail válido.</div>
+      </div>
+
+      
+      <label for="senha">Senha:</label>
+      <input
+        id="senha"
+        type="password"
+        class="form-control"
+        formControlName="senha"
+        placeholder="Crie uma senha"
+        autocomplete="new-password"
+        [class.is-invalid]="(senha.invalid && (senha.dirty || senha.touched)) || (formulario.hasError('passwordsMismatch') && (confirmarSenha.dirty || confirmarSenha.touched))">
+      <div class="invalid-feedback" *ngIf="(senha.errors && (senha.dirty || senha.touched))">
+        <div *ngIf="senha.hasError('required')">Senha é obrigatória.</div>
+        <div *ngIf="senha.hasError('minlength')">Mínimo de 6 caracteres.</div>
+      </div>
+
+      
+      <label for="confirmarSenha">Confirmar Senha:</label>
+      <input
+        id="confirmarSenha"
+        type="password"
+        class="form-control"
+        formControlName="confirmarSenha"
+        placeholder="Repita a senha"
+        autocomplete="new-password"
+        [class.is-invalid]="confirmarSenha.invalid && (confirmarSenha.dirty || confirmarSenha.touched) || (formulario.hasError('passwordsMismatch') && (confirmarSenha.dirty || confirmarSenha.touched))">
+      <div class="invalid-feedback" *ngIf="(confirmarSenha.errors && (confirmarSenha.dirty || confirmarSenha.touched)) || (formulario.hasError('passwordsMismatch') && (confirmarSenha.dirty || confirmarSenha.touched))">
+        <div *ngIf="confirmarSenha.hasError('required')">Confirmação de senha é obrigatória.</div>
+        <div *ngIf="formulario.hasError('passwordsMismatch')">As senhas não coincidem.</div>
+      </div>
+
+      <div class="possui-login">
+        <p class="login">
+          Já possui uma conta?
+          <a routerLink="/login" class="text-primary">Faça login aqui</a>
+        </p>
+      </div>
+
+      <button type="submit" [disabled]="formulario.invalid || loading">
+        {{ loading ? 'Enviando...' : 'Enviar' }}
+      </button>
+    </form>
+  </div>
+</div>

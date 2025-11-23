@@ -1,0 +1,32 @@
+
+<div class="user-menu" (click)="$event.stopPropagation()">
+  <ng-container *ngIf="isLogged; else loginLink">
+    <button class="avatar-btn" type="button" (click)="toggleSideba.emit(); toggleMenu($event)" aria-label="Abrir menu do usuário">
+      <img class="avatar" src="/public/images/pessoa.png" alt="Avatar">
+       
+    </button>
+
+    <div class="dropdown" *ngIf="isOpen" (click)="$event.stopPropagation()">
+      <div class="user-info">
+        <div class="name">
+          {{ nome }}
+          <span class="role" *ngIf="tipo">• {{ tipo === 'adm' ? 'Administrador' : 'Cliente' }}</span>
+        </div>
+        <div class="email">{{ email }}</div>
+      </div>
+
+      <div class="menu">
+        <a routerLink="/conta" (click)="isOpen=false">Minha conta</a>
+        <a routerLink="/pedidos" (click)="isOpen=false">Meus pedidos</a>
+        <a routerLink="/carrinho" (click)="isOpen=false">Carrinho</a>
+        <a *ngIf="tipo === 'adm'" routerLink="/admin" (click)="isOpen=false">Área Admin</a>
+      </div>
+
+      <button class="logout" (click)="sair()">Finalizar sessão</button>
+    </div>
+  </ng-container>
+
+  <ng-template #loginLink>
+    <a class="btn btn-primary btn-login" routerLink="/login">Entrar</a>
+  </ng-template>
+</div>

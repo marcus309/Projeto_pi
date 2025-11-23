@@ -1,0 +1,61 @@
+
+<nav class="navbar">
+  <div class="nav-left">
+
+    <img src="images/logo.png" alt="Logo Pura Essência" class="nav-logo">
+    <span class="brand">Pura Essência</span>
+  </div>
+  <div class="nav-right">
+    <a class="nav-btn" routerLink="/">Menu</a>
+    <a class="nav-btn" routerLink="/contato">Contato</a>
+  </div>
+</nav>
+
+<div class="page">
+  <div class="content-wrapper">
+    <div class="quadrado">
+      <div class="quadrado2">
+        <h1>Pura Essência</h1>
+
+      
+        <div *ngIf="errorMsg" class="error-box" role="alert">{{ errorMsg }}</div>
+
+        <form (ngSubmit)="login()" #f="ngForm" novalidate class="form-stack">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            [(ngModel)]="email"
+            placeholder="seu@email"
+            autocomplete="email"
+            required
+            autofocus>
+
+          <label for="senha">Senha</label>
+          <input
+            type="password"
+            id="senha"
+            name="senha"
+            [(ngModel)]="senha"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+            (keyup.enter)="login()">
+
+          <button type="submit" [disabled]="loading">
+            {{ loading ? 'Entrando...' : 'Entrar' }}
+          </button>
+        </form>
+
+        <p style="margin-top:10px; text-align:center;">
+          <a routerLink="/esqueci-senha">Esqueci minha senha</a>
+        </p>
+
+        <div class="cadastro-link" style="margin-top:10px; text-align:center;">
+          <p>Não possui conta? <a routerLink="/cadastro">Cadastre-se aqui</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,133 @@
+
+<section class="hero-mini">
+  <div class="container hero-head">
+    <div>
+      <h1>Meus Pedidos</h1>
+      <p>Acompanhe o status dos seus pedidos e veja os detalhes de cada compra.</p>
+    </div>
+    <a class="btn btn-outline-primary" routerLink="/">Voltar ao menu</a>
+  </div>
+</section>
+
+<section class="filtros container">
+  <div class="row">
+    <div class="col">
+      <input type="text"
+             [ngModel]="filtroTexto()"
+             (ngModelChange)="filtroTexto.set($event)"
+             placeholder="Buscar por nº do pedido, nome ou e-mail">
+    </div>
+    <div class="col">
+      <select
+        [ngModel]="filtroStatus()"
+        (ngModelChange)="filtroStatus.set($event)">
+        <option value="todos">Todos os status</option>
+        <option value="pendente">Pendente</option>
+        <option value="processando">Processando</option>
+        <option value="enviado">Enviado</option>
+        <option value="concluido">Concluído</option>
+        <option value="cancelado">Cancelado</option>
+      </select>
+    </div>
+    <div class="col">
+      <input type="date"
+             [ngModel]="dataInicio()"
+             (ngModelChange)="dataInicio.set($event)">
+    </div>
+    <div class="col">
+      <input type="date"
+             [ngModel]="dataFim()"
+             (ngModelChange)="dataFim.set($event)">
+    </div>
+    <div class="col-auto">
+      <button class="btn btn-outline-primary" (click)="resetFiltros()">Limpar</button>
+    </div>
+  </div>
+</section>
+
+<section class="lista container" *ngIf="!carregando && !erro; else estado">
+  <div class="grid">
+    <article class="pedido" *ngFor="let p of filtrados(); trackBy: trackById" (click)="abrirDetalhes(p)">
+      <header class="pedido-top">
+        <div class="lado-esq">
+          <h3>#{{ p.numero }}</h3>
+          <span class="data">{{ p.criadoEm | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <span class="{{ classeStatus(p.status) }}">{{ p.status | titlecase }}</span>
+      </header>
+
+      <div class="pedido-body">
+        <div class="cliente">
+          <strong>{{ p.clienteNome }}</strong>
+          <small>{{ p.clienteEmail }}</small>
+        </div>
+        <div class="resumo">
+          <span>{{ totalItens(p) }} itens</span>
+          <span class="total">Total: R$ {{ p.total | number:'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <footer class="pedido-media">
+        <img *ngFor="let i of p.itens | slice:0:4"
+             [src]="i.img || 'assets/images/placeholder.png'"
+             [alt]="i.nome"
+             (error)="onImgError($event)">
+        <span *ngIf="p.itens.length > 4" class="mais">+{{ p.itens.length - 4 }}</span>
+      </footer>
+    </article>
+  </div>
+</section>
+
+<ng-template #estado>
+  <div class="container estado">
+    <div *ngIf="carregando">Carregando pedidos...</div>
+    <div *ngIf="erro">Não foi possível carregar os pedidos agora.</div>
+  </div>
+</ng-template>
+
+<div class="drawer-backdrop" *ngIf="aberto()" (click)="fecharDetalhes()"></div>
+<aside class="drawer" *ngIf="aberto()">
+  <header>
+    <h3>Pedido #{{ selecionado()?.numero }}</h3>
+    <button class="btn-fechar" (click)="fecharDetalhes()" aria-label="Fechar">×</button>
+  </header>
+
+  <section class="bloco">
+    <div class="linha">
+      <span>Status</span>
+      <strong class="{{ classeStatus(selecionado()?.status!) }}">{{ selecionado()?.status | titlecase }}</strong>
+    </div>
+    <div class="linha">
+      <span>Cliente</span>
+      <strong>{{ selecionado()?.clienteNome }}</strong>
+    </div>
+    <div class="linha">
+      <span>E-mail</span>
+      <strong>{{ selecionado()?.clienteEmail }}</strong>
+    </div>
+    <div class="linha">
+      <span>Data</span>
+      <strong>{{ selecionado()?.criadoEm | date:'dd/MM/yyyy HH:mm' }}</strong>
+    </div>
+  </section>
+
+  <section class="itens">
+    <h4>Itens</h4>
+    <div class="item" *ngFor="let i of selecionado()?.itens">
+      <img [src]="i.img || 'assets/images/placeholder.png'"
+           [alt]="i.nome"
+           (error)="onImgError($event)">
+      <div class="info">
+        <div class="nome">{{ i.nome }}</div>
+        <div class="meta">Qtd: {{ i.qtd }}</div>
+      </div>
+      <div class="preco">R$ {{ (i.preco * i.qtd) | number:'1.2-2' }}</div>
+    </div>
+  </section>
+
+  <section class="totais">
+    <div class="linha"><span>Subtotal</span><strong>R$ {{ selecionado()?.subtotal | number:'1.2-2' }}</strong></div>
+    <div class="linha"><span>Frete</span><strong>R$ {{ selecionado()?.frete | number:'1.2-2' }}</strong></div>
+    <div class="linha total"><span>Total</span><strong>R$ {{ selecionado()?.total | number:'1.2-2' }}</strong></div>
+  </section>
+</aside>

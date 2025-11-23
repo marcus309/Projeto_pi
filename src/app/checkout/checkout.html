@@ -1,0 +1,84 @@
+<div class="checkout-root">
+    <img class="logo" src="/public/images/logo.png" alt="Logo">
+
+    <div class="quadrado" role="main" aria-label="Área de checkout">
+        <div class="left-side" aria-label="Resumo do pedido">
+            <ul id="lista-carrinho">
+                <li *ngFor="let item of carrinho">
+                    {{ item.nome }} — {{ item.qtd }}x • R$ {{ calcItemTotal(item) | number:'1.2-2' }}
+                </li>
+                <li *ngIf="carrinho.length === 0">Seu carrinho está vazio.</li>
+            </ul>
+
+            <div class="product-card">
+                <div class="summary">
+                    <div>Frete: <strong>R$ {{ frete | number:'1.2-2' }}</strong></div>
+                    <div style="margin-top:8px;">Total: <strong id="total-com-frete">R$ {{ totalFinal | number:'1.2-2' }}</strong></div>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="summary">
+                    <div>Entrega prevista</div>
+                    <div class="note">Envio em 2-4 dias úteis</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="quadrado2" aria-label="Formulário de pagamento">
+            <h1>Finalizar Compra</h1>
+
+            
+            <form id="checkoutForm" (submit)="onSubmit($event)" autocomplete="on" novalidate>
+                <label for="nome">Nome completo</label>
+                <input id="nome" name="nome" type="text" placeholder="Seu nome" required>
+
+                <label for="email">E-mail</label>
+                <input id="email" name="email" type="email" placeholder="seu@email.com" required>
+
+                <label for="endereco">Endereço</label>
+                <input id="endereco" name="endereco" type="text" placeholder="Rua, número, bairro" required>
+
+                <div class="two-cols" style="margin-top:6px;">
+                    <div class="small">
+                        <label for="cep">CEP</label>
+                        <input id="cep" name="cep" type="text" placeholder="00000-000" required>
+                    </div>
+                    <div class="small">
+                        <label for="cidade">Cidade</label>
+                        <input id="cidade" name="cidade" type="text" placeholder="São Paulo" required>
+                    </div>
+                </div>
+
+                <hr class="linha">
+
+                <label for="cartao">Número do cartão</label>
+                <input id="cartao" name="cartao" type="text" placeholder="0000 0000 0000 0000" inputmode="numeric" required>
+
+                <div class="two-cols">
+                    <div class="small">
+                        <label for="validade">Validade</label>
+                        <input id="validade" name="validade" type="text" placeholder="MM/AA" required>
+                    </div>
+                    <div class="small">
+                        <label for="cvv">CVV</label>
+                        <input id="cvv" name="cvv" type="password" placeholder="123" required>
+                    </div>
+                </div>
+
+                <label for="cpf" style="margin-top:6px;">CPF</label>
+                <input id="cpf" name="cpf" type="text" placeholder="000.000.000-00" required>
+
+                <div style="margin-top:14px;">
+                    <button type="submit" id="pagar-btn">
+                        Pagar R$ {{ totalFinal | number:'1.2-2' }}
+                    </button>
+                </div>
+
+                <div class="note" role="status" aria-live="polite">
+                    Pagamento 100% seguro. Ao confirmar, você será redirecionado para a finalização.
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

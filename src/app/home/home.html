@@ -1,0 +1,121 @@
+
+<nav class="navbar navbar-expand-lg header navbar-light">
+  <div class="container">
+    <a class="navbar-brand" routerLink="/">
+      <img class="logo" src="images/logo.png" alt="Logo">
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-label="Abrir menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-center" id="menu">
+      <ul class="navbar-nav gap-3">
+        <li class="nav-item">
+          <a class="nav-link" href="#produtos">Produtos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/cadastro">Cadastro</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/login">Login</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="d-flex align-items-center gap-2 position-relative" (click)="$event.stopPropagation()">
+      <button class="avatar-btn me-1" type="button" (click)="onAvatarClick($event)">
+        <img class="avatar" src="images/avatar-placeholder.png" alt="Avatar">
+      </button>
+
+      <div class="user-dropdown" *ngIf="showUserMenu">
+        <div class="user-head" *ngIf="userApi as u">
+          <div class="user-name">{{ u.nome || 'Usuário' }}</div>
+          <div class="user-email">{{ u.email }}</div>
+        </div>
+        <a class="dropdown-item" (click)="verPedidos()">Ver pedidos</a>
+        <button class="dropdown-item text-danger" (click)="finalizarSessao()">Finalizar sessão</button>
+      </div>
+
+      <button class="btn btn-outline-primary ms-2" (click)="abrirCarrinho()">
+        <i class="fas fa-shopping-cart me-1"></i> Carrinho
+      </button>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="container text-center">
+    <h1>Perfumes que Encantam</h1>
+    <p>Descubra fragrâncias que despertam memórias e emoções</p>
+    <a href="#produtos" class="btn btn-primary" aria-label="Ir para a seção Nossos Produtos">Explorar Coleção</a>
+  </div>
+</section>
+
+<main class="py-5 bg-light" id="produtos">
+  <div class="container">
+    <h2 class="text-center mb-5 fw-bold">Nossos Produtos</h2>
+    <div class="row g-4">
+      <div class="col-md-4 col-lg-3" *ngFor="let p of produtos">
+        <div class="card h-100 text-center shadow-sm">
+          <img [src]="p.img" class="card-img-top" [alt]="p.nome" (error)="onImgError($event)">
+          <div class="card-body">
+            <h5 class="card-title fw-bold">{{ p.nome }}</h5>
+            <p class="text-muted mb-3">R$ {{ p.preco | number:'1.2-2' }}</p>
+            <button class="btn btn-primary" (click)="adicionarAoCarrinho(p.id)">
+              <i class="fas fa-cart-plus me-1"></i> Adicionar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div #carrinhoOffcanvas class="offcanvas offcanvas-end" tabindex="-1" id="carrinho" aria-labelledby="carrinhoLabel">
+  <div class="offcanvas-header">
+    <h5 id="carrinhoLabel">Seu Carrinho</h5>
+    <button type="button" class="btn-close text-reset" (click)="fecharCarrinho()" aria-label="Fechar"></button>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="list-group mb-3" *ngIf="carrinho.length > 0; else vazio">
+      <li class="list-group-item d-flex justify-content-between align-items-center" *ngFor="let i of carrinho">
+        <div>
+          <strong>{{ i.nome }}</strong><br>
+          <small>R$ {{ (i.preco * i.qtd) | number:'1.2-2' }} ({{ i.qtd }}x)</small>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <button class="btn btn-sm btn-outline-secondary" (click)="alterarQuantidade(i.id, -1)">−</button>
+          <span>{{ i.qtd }}</span>
+          <button class="btn btn-sm btn-outline-secondary" (click)="alterarQuantidade(i.id, 1)">+</button>
+          <button class="btn btn-sm btn-danger" (click)="removerItem(i.id)">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </li>
+    </ul>
+
+    <ng-template #vazio>
+      <p>Seu carrinho está vazio.</p>
+    </ng-template>
+
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <strong>Total:</strong>
+      <span>R$ {{ totalCarrinho | number:'1.2-2' }}</span>
+    </div>
+
+    <a class="btn btn-primary w-100 mt-3" [routerLink]="['/checkout']" (click)="fecharCarrinho()">
+      Finalizar Compra
+    </a>
+  </div>
+</div>
+
+<footer class="footer text-white py-4 mt-5">
+  <div class="container d-flex justify-content-between align-items-center">
+    <span>&copy; {{ currentYear }} Pura Essência - Todos os direitos reservados</span>
+    <div class="social">
+      <a href="https://www.instagram.com/matheusoliver___/"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.facebook.com/mirrorfashion"><i class="fab fa-facebook"></i></a>
+    </div>
+  </div>
+</footer>
