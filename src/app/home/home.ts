@@ -40,6 +40,7 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
 
     ngOnInit(): void {
         this.refreshProdutos();
+
         this.routerSub = this.router.events.subscribe(ev => {
             if (ev instanceof NavigationEnd) {
                 if (this.router.url === '/' || this.router.url.startsWith('/#')) {
@@ -47,8 +48,10 @@ export class Home implements OnInit, AfterViewInit, OnDestroy {
                 }
             }
         });
+
         this.carrinho = this.getCarrinho();
         this.atualizarTotalLocalStorage();
+
         const sessaoRaw = localStorage.getItem('user');
         if (sessaoRaw) {
             try {
