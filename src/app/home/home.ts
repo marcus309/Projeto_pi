@@ -103,7 +103,12 @@ export class Home implements OnInit, AfterViewInit {
 
     verPedidos(): void {
         this.showUserMenu = false;
-               this.router.navigate(['/pedidos']);
+        this.router.navigate(['/pedidos']);
+    }
+
+    irParaAdmin(): void {
+        this.showUserMenu = false;
+        this.router.navigate(['/admin']);
     }
 
     finalizarSessao(): void {
@@ -118,14 +123,11 @@ export class Home implements OnInit, AfterViewInit {
     }
 
     private normalizeImgPath(path: string | undefined | null): string {
-        if (!path) return 'images/badboy.png'; 
-        
+        if (!path) return 'images/badboy.png';
         let out = path.replace(/^\/+/, '');
-       
         out = out.replace(/^src\/assets\//, 'assets/');
         out = out.replace(/^assets\/images\//, 'images/');
         out = out.replace(/^public\//, '');
-       
         out = out.replace(/\.PNG$/i, '.png');
         return out;
     }
@@ -209,7 +211,6 @@ export class Home implements OnInit, AfterViewInit {
         const target = event.target as HTMLImageElement;
         if (!target) return;
         target.onerror = null;
-        
         target.src = 'images/badboy.png';
     }
 }

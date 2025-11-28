@@ -3,9 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-
-
-import { ProdutoService, Produto } from '../core/service/produtos'; 
+import { ProdutoService } from '../core/service/produtos';
 
 @Component({
   selector: 'app-admin',
@@ -15,7 +13,7 @@ import { ProdutoService, Produto } from '../core/service/produtos';
   styleUrls: ['./admin.css']
 })
 export class Admin implements OnInit {
-  produtos: Produto[] = [];
+  produtos: any[] = [];
   showModal = false;
   produtoForm!: FormGroup;
   formId: number | null = null;
@@ -31,13 +29,13 @@ export class Admin implements OnInit {
   }
 
   private criarFormulario(): void {
+    
+    const imgPattern = /^(images\/.+|assets\/images\/.+|https?:\/\/.+)\.(png|jpg|jpeg|webp|gif)$/i;
+
     this.produtoForm = this.fb.group({
       nome: new FormControl<string>('', [Validators.required, Validators.minLength(3)]),
       preco: new FormControl<number | null>(null, [Validators.required, Validators.min(0)]),
-      img: new FormControl<string>('', [
-        Validators.required,
-        Validators.pattern(/^((\/.+)|https?:\/\/.+)\.(png|jpg|jpeg|webp|gif)$/i)
-      ])
+      img: new FormControl<string>('', [Validators.required, Validators.pattern(imgPattern)])
     });
   }
 
@@ -47,13 +45,8 @@ export class Admin implements OnInit {
 
   private loadProdutos(): void {
     this.produtoService.listar().subscribe({
-      next: data => {
-        this.produtos = data;
-        console.log('Produtos carregados:', data);
-      },
-      error: err => {
-        console.error('Erro ao carregar /products:', err);
-      }
+      next: data => { this.produtos = data; },
+      error: err => { console.error('Erro ao carregar /products:', err); }
     });
   }
 
@@ -79,9 +72,7 @@ export class Admin implements OnInit {
     if (!confirm('Excluir este produto?')) return;
     this.produtoService.excluir(id).subscribe({
       next: () => this.produtos = this.produtos.filter(p => p.id !== id),
-      error: () => {
-        console.error('Erro ao excluir.');
-      }
+      error: () => { console.error('Erro ao excluir.'); }
     });
   }
 
@@ -98,17 +89,16 @@ export class Admin implements OnInit {
       nome: (this.nome.value || '').trim(),
       preco: Number(this.preco.value ?? 0),
       img: (this.img.value || '').trim()
-    };  
+    };
 
     if (this.formId == null) {
-      this.produtoService.incluir(payload as Omit<Produto, 'id'>).subscribe({
+      
+      this.produtoService.incluir(payload as any).subscribe({
         next: created => {
           this.produtos = [...this.produtos, created];
           this.fecharModal();
         },
-        error: () => {
-          console.error('Erro ao criar produto.');
-        }
+        error: () => { console.error('Erro ao criar produto.'); }
       });
     } else {
       this.produtoService.editar(this.formId, payload).subscribe({
@@ -116,9 +106,7 @@ export class Admin implements OnInit {
           this.produtos = this.produtos.map(p => p.id === this.formId ? updated : p);
           this.fecharModal();
         },
-        error: () => {
-          console.error('Erro ao atualizar produto.');
-        }
+        error: () => { console.error('Erro ao atualizar produto.'); }
       });
     }
   }
@@ -126,6 +114,7 @@ export class Admin implements OnInit {
   onImgError(ev: Event): void {
     const img = ev.target as HTMLImageElement;
     if (!img) return;
-    img.src = 'assets/images/placeholder.png';
+    
+    img.src = 'images/badboy.png';
   }
 }

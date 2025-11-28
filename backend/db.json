@@ -1,106 +1,92 @@
 {
-    "products": [
-        {
-            "id": "1",
-            "nome": "Carolina Herrera Bad Boy",
-            "preco": 619.9,
-            "img": "images/badboy.png"
-        },
-        {
-            "id": "2",
-            "nome": "Invictus Victory",
-            "preco": 760,
-            "img": "images/invictus.png"
-        },
-        {
-            "id": "3",
-            "nome": "Phantom",
-            "preco": 400,
-            "img": "images/phantom.png"
-        },
-        {
-            "id": "4",
-            "nome": "Granado Gardênia",
-            "preco": 599.99,
-            "img": "images/floral.png"
-        },
-        {
-            "id": "5",
-            "nome": "Essencial Único",
-            "preco": 899.9,
-            "img": "images/amadeirado.png"
-        },
-        {
-            "id": "6",
-            "nome": "Citrus Amber",
-            "preco": 699.9,
-            "img": "images/citrico.png"
-        },
-        {
-            "id": "7",
-            "nome": "Xerjoff Erba Pura",
-            "preco": 2009.9,
-            "img": "images/luxo.png"
-        },
-        {
-            "id": "8",
-            "nome": "Stronger With You",
-            "preco": 599.9,
-            "img": "images/doce.png"
-        },
-        {
-            "id": "9",
-            "nome": "Nautica Voyage",
-            "preco": 249.9,
-            "img": "images/nautica.png"
-        },
-        {
-            "id": "10",
-            "nome": "Versace Eros",
-            "preco": 399.9,
-            "img": "images/eros.png"
-        },
-        {
-            "id": "11",
-            "nome": "Bleu de Chanel",
-            "preco": 699.9,
-            "img": "images/bleu.jpg"
-        },
-        {
-            "id": "12",
-            "nome": "212 VIP Black",
-            "preco": 349.9,
-            "img": "images/212vip.png"
-        }
-    ],
-    "users": [
-        {
-            "id": "1",
-            "nome": "Administrador",
-            "email": "admin@puraessencia.com",
-            "senha": "123",
-            "tipo": "adm"
-        },
-        {
-            "id": "2",
-            "nome": "Cliente 1",
-            "email": "cliente1@puraessencia.com",
-            "senha": "abc",
-            "tipo": "cliente"
-        },
-        {
-            "id": "1eba",
-            "nome": "Aaa ",
-            "email": "aaaa@gmail.com",
-            "senha": "aaaaaa",
-            "tipo": "cliente"
-        },
-        {
-            "id": "89ac",
-            "nome": "asasdada",
-            "email": "dadad@gmail.com",
-            "senha": "222222",
-            "tipo": "cliente"
-        }
-    ]
+  "products": [
+    {
+      "id": "1",
+      "nome": "Carolina Herrera Bad Boy",
+      "preco": 619.9,
+      "img": "images/badboy.png"
+    },
+    {
+      "id": "2",
+      "nome": "Invictus Victory",
+      "preco": 760,
+      "img": "images/invictus.png"
+    },
+    {
+      "id": "3",
+      "nome": "Phantom",
+      "preco": 400,
+      "img": "images/phantom.PNG"
+    },
+    {
+      "id": "4",
+      "nome": "Granado Gardênia",
+      "preco": 599.99,
+      "img": "images/floral.png"
+    },
+    {
+      "id": "5",
+      "nome": "Essencial Único",
+      "preco": 899.9,
+      "img": "images/amadeirado.png"
+    },
+    {
+      "id": "6",
+      "nome": "Citrus Amber",
+      "preco": 699.9,
+      "img": "images/citrico.png"
+    },
+    {
+      "id": "7",
+      "nome": "Xerjoff Erba Pura",
+      "preco": 2009.9,
+      "img": "images/luxo.png"
+    },
+    {
+      "id": "8",
+      "nome": "Stronger With You",
+      "preco": 599.9,
+      "img": "images/doce.png"
+    },
+    {
+      "id": "9",
+      "nome": "Nautica Voyage",
+      "preco": 249.9,
+      "img": "images/nautica.png"
+    },
+    {
+      "id": "10",
+      "nome": "Versace Eros",
+      "preco": 399.9,
+      "img": "images/eros.png"
+    },
+    {
+      "id": "11",
+      "nome": "Bleu de Chanel",
+      "preco": 699.9,
+      "img": "images/bleu.jpg"
+    },
+    {
+      "id": "12",
+      "nome": "212 VIP Black",
+      "preco": 349.9,
+      "img": "images/212vip.png"
+    }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "nome": "Administrador",
+      "email": "admin@puraessencia.com",
+      "senha": "123",
+      "tipo": "adm"
+    },
+    {
+      "id": "2",
+      "nome": "Cliente 1",
+      "email": "cliente1@puraessencia.com",
+      "senha": "abc",
+      "tipo": "cliente"
+    }
+  ]
 }
