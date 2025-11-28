@@ -50,7 +50,7 @@ export class Home implements OnInit, AfterViewInit {
                     this.produtos = [
                         { id: 1, nome: 'Carolina Herrera Bad Boy', preco: 619.90, img: 'images/badboy.png' },
                         { id: 2, nome: 'Invictus Victory', preco: 760.00, img: 'images/invictus.png' },
-                        { id: 3, nome: 'Phantom', preco: 400.00, img: 'images/phantom.png' },
+                        { id: 3, nome: 'Phantom', preco: 400.00, img: 'images/phantom.PNG' },
                         { id: 4, nome: 'Granado Gardênia', preco: 599.99, img: 'images/floral.png' },
                         { id: 5, nome: 'Essencial Único', preco: 899.90, img: 'images/amadeirado.png' },
                         { id: 6, nome: 'Citrus Amber', preco: 699.90, img: 'images/citrico.png' },
