@@ -42,13 +42,8 @@ export class ProdutoService {
 
     incluir(produto: CreateProduto): Observable<Produto> {
         const current = this.readLocalProducts();
-        const staticIds = this.readStaticIdsCached();
-        const next = this.nextId([...current.map(p => p.id), ...staticIds]);
-        const novo: Produto = {
-            ...produto,
-            id: next,
-            img: this.normalizeImgPath((produto as any).img)
-        };
+        const next = this.nextId(current.map(p => p.id));
+        const novo: Produto = { ...produto, id: next, img: this.normalizeImgPath((produto as any).img) };
         localStorage.setItem(this.LS_PRODUCTS, JSON.stringify([...current, novo]));
         return of(novo);
     }
@@ -158,7 +153,6 @@ export class ProdutoService {
         const norm = (s: string) => (s || '').trim().toLowerCase();
 
         const staticIds = new Set(staticList.map(s => s.id));
-        const staticNames = new Set(staticList.map(s => norm(s.nome)));
 
         const localById = new Map<number, Produto>(local.map(i => [i.id, i]));
         const localByName = new Map<string, Produto>();
@@ -171,9 +165,9 @@ export class ProdutoService {
         for (const s of staticList) {
             if (deleted.has(s.id)) continue;
             const ov = overrides[s.id] || {};
-            const fromLocalById = localById.get(s.id);
-            const fromLocalByName = localByName.get(norm(s.nome));
-            const base = fromLocalById || fromLocalByName || s;
+            const byId = localById.get(s.id);
+            const byName = localByName.get(norm(s.nome));
+            const base = byId || byName || s;
             const merged: Produto = {
                 id: s.id,
                 nome: typeof ov.nome !== 'undefined' ? String(ov.nome) : base.nome,
@@ -186,17 +180,8 @@ export class ProdutoService {
         const onlyLocal = local
             .filter(l => !deleted.has(l.id))
             .filter(l => !staticIds.has(l.id))
-            .filter(l => !staticNames.has(norm(l.nome)))
             .sort((a, b) => a.id - b.id);
 
         return [...canonical, ...onlyLocal];
-    }
-
-    private readStaticIdsCached(): number[] {
-        try {
-            return JSON.parse(sessionStorage.getItem('__static_ids__') || '[]');
-        } catch {
-            return [];
-        }
     }
 }
