@@ -1,7 +1,6 @@
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, catchError, map, of, switchMap } from 'rxjs';
+import { Observable, map, of, catchError } from 'rxjs';
 
 export interface Produto {
     id: number;
@@ -14,91 +13,132 @@ export type CreateProduto = Omit<Produto, 'id'>;
 
 @Injectable({ providedIn: 'root' })
 export class ProdutoService {
-    
-    private readonly API = 'http://localhost:3000/products';
-    private readonly STATIC_DB = 'backend/db.json';
-    private readonly LS_KEY = 'produtos';
+    private readonly BASE = document?.baseURI || '/';
+    private readonly STATIC_DB = new URL('backend/db.json', this.BASE).toString();
+    private readonly LS_PRODUCTS = 'produtos';
+    private readonly LS_DELETED = 'produtos_deleted_ids';
+    private readonly LS_OVERRIDES = 'produtos_overrides';
 
     constructor(private http: HttpClient) {}
 
     listar(): Observable<Produto[]> {
-        
-        return this.http.get<Produto[]>(this.API).pipe(
-            map(list => list.map(p => ({ ...p, img: this.normalizeImgPath(p.img) }))),
-            
-            catchError(() => this.http.get<any>(this.STATIC_DB).pipe(
-                map(db => (db?.products ?? []).map((p: any) => ({
-                    id: Number(p.id),
-                    nome: p.nome,
-                    preco: Number(p.preco),
-                    img: this.normalizeImgPath(p.img)
-                })))
-            )),
-            
-            catchError(() => {
-                const raw = localStorage.getItem(this.LS_KEY);
-                const list: Produto[] = raw ? JSON.parse(raw) : [];
-                return of(list.map(p => ({ ...p, img: this.normalizeImgPath(p.img) })));
-            })
+        const local = this.readLocalProducts();
+        return this.http.get<any>(this.STATIC_DB).pipe(
+            map(db => (db?.products ?? []).map((p: any) => this.mapRow(p))),
+            map(staticList => this.mergeWithRules(staticList, local)),
+            map(merged => {
+                localStorage.setItem(this.LS_PRODUCTS, JSON.stringify(merged));
+                return merged;
+            }),
+            catchError(() => of(local))
         );
     }
 
-    buscarPorId(id: number): Observable<Produto> {
-        return this.http.get<Produto>(`${this.API}/${id}`);
+    buscarPorId(id: number): Observable<Produto | null> {
+        const all = this.readLocalProducts();
+        const found = all.find(p => p.id === id) || null;
+        return of(found);
     }
 
     incluir(produto: CreateProduto): Observable<Produto> {
-       
-        return this.http.get<Produto[]>(this.API).pipe(
-            map(list => this.nextId(list)),
-            map(nextId => ({ ...produto, id: nextId })),
-            switchMap(body => this.http.post<Produto>(this.API, body)),
-            
-            catchError(() => {
-                const raw = localStorage.getItem(this.LS_KEY);
-                const current: Produto[] = raw ? JSON.parse(raw) : [];
-                const id = this.nextId(current);
-                const novo: Produto = { ...produto, id, img: this.normalizeImgPath((produto as any).img) };
-                const updated = [...current, novo];
-                localStorage.setItem(this.LS_KEY, JSON.stringify(updated));
-                return of(novo);
-            })
-        );
+        const current = this.readLocalProducts();
+        const staticIds = this.readStaticIdsCached();
+        const next = this.nextId([...current.map(p => p.id), ...staticIds]);
+        const novo: Produto = {
+            ...produto,
+            id: next,
+            img: this.normalizeImgPath((produto as any).img)
+        };
+        localStorage.setItem(this.LS_PRODUCTS, JSON.stringify([...current, novo]));
+        return of(novo);
     }
 
     editar(id: number, changes: Partial<Produto>): Observable<Produto> {
-        return this.http.patch<Produto>(`${this.API}/${id}`, changes).pipe(
-            catchError(() => {
-                const raw = localStorage.getItem(this.LS_KEY);
-                const current: Produto[] = raw ? JSON.parse(raw) : [];
-                const updated = current.map(p => p.id === id ? { ...p, ...changes } as Produto : p);
-                localStorage.setItem(this.LS_KEY, JSON.stringify(updated));
-                const result = updated.find(p => p.id === id)!;
-                return of(result);
-            })
-        );
+        const overrides = this.readOverrides();
+        const patch: Partial<Produto> = {};
+        if (typeof changes.nome !== 'undefined') patch.nome = String(changes.nome);
+        if (typeof changes.preco !== 'undefined') patch.preco = Number(changes.preco);
+        if (typeof changes.img !== 'undefined') patch.img = this.normalizeImgPath(changes.img as any);
+        overrides[id] = { ...(overrides[id] || {}), ...patch };
+        localStorage.setItem(this.LS_OVERRIDES, JSON.stringify(overrides));
+
+        const products = this.readLocalProducts();
+        const updated = products.map(p => (p.id === id ? { ...p, ...patch } : p));
+        localStorage.setItem(this.LS_PRODUCTS, JSON.stringify(updated));
+
+        const result = updated.find(p => p.id === id) || null;
+        return of(result as Produto);
     }
 
     excluir(id: number): Observable<void> {
-        return this.http.delete<void>(`${this.API}/${id}`).pipe(
-            catchError(() => {
-                const raw = localStorage.getItem(this.LS_KEY);
-                const current: Produto[] = raw ? JSON.parse(raw) : [];
-                const updated = current.filter(p => p.id !== id);
-                localStorage.setItem(this.LS_KEY, JSON.stringify(updated));
-                return of(void 0);
-            })
-        );
+        const deleted = this.readDeleted();
+        if (!deleted.includes(id)) {
+            deleted.push(id);
+            localStorage.setItem(this.LS_DELETED, JSON.stringify(deleted));
+        }
+        const products = this.readLocalProducts().filter(p => p.id !== id);
+        localStorage.setItem(this.LS_PRODUCTS, JSON.stringify(products));
+        return of(void 0);
     }
 
+    private readLocalProducts(): Produto[] {
+        try {
+            const raw = localStorage.getItem(this.LS_PRODUCTS);
+            const list: Produto[] = raw ? JSON.parse(raw) : [];
+            return list.map(p => ({
+                id: Number((p as any).id),
+                nome: String((p as any).nome),
+                preco: Number((p as any).preco),
+                img: this.normalizeImgPath((p as any).img)
+            }));
+        } catch {
+            return [];
+        }
+    }
 
+    private readDeleted(): number[] {
+        try {
+            const raw = localStorage.getItem(this.LS_DELETED);
+            const arr: any[] = raw ? JSON.parse(raw) : [];
+            return arr.map(x => Number(x)).filter(n => Number.isFinite(n));
+        } catch {
+            return [];
+        }
+    }
 
-    private nextId(list: Array<{ id: number | string }>): number {
-        const maxId = list.reduce((acc, item) => {
-            const n = Number((item as any)?.id);
-            return Number.isFinite(n) ? Math.max(acc, n) : acc;
-        }, 0);
-        return maxId + 1;
+    private readOverrides(): Record<number, Partial<Produto>> {
+        try {
+            const raw = localStorage.getItem(this.LS_OVERRIDES);
+            const obj = raw ? JSON.parse(raw) : {};
+            const out: Record<number, Partial<Produto>> = {};
+            for (const k of Object.keys(obj)) {
+                const id = Number(k);
+                if (!Number.isFinite(id)) continue;
+                const v = obj[k] || {};
+                out[id] = {
+                    ...(typeof v.nome !== 'undefined' ? { nome: String(v.nome) } : {}),
+                    ...(typeof v.preco !== 'undefined' ? { preco: Number(v.preco) } : {}),
+                    ...(typeof v.img !== 'undefined' ? { img: this.normalizeImgPath(v.img) } : {})
+                };
+            }
+            return out;
+        } catch {
+            return {};
+        }
+    }
+
+    private mapRow(p: any): Produto {
+        return {
+            id: Number(p.id),
+            nome: String(p.nome),
+            preco: Number(p.preco),
+            img: this.normalizeImgPath(p.img)
+        };
+    }
+
+    private nextId(existingIds: number[]): number {
+        const max = existingIds.reduce((acc, n) => (Number.isFinite(n) ? Math.max(acc, n) : acc), 0);
+        return max + 1;
     }
 
     private normalizeImgPath(path?: string | null): string {
@@ -110,5 +150,53 @@ export class ProdutoService {
         out = out.replace(/^public\//i, '');
         out = out.replace(/\.PNG$/i, '.png');
         return out;
+    }
+
+    private mergeWithRules(staticList: Produto[], local: Produto[]): Produto[] {
+        const deleted = new Set(this.readDeleted());
+        const overrides = this.readOverrides();
+        const norm = (s: string) => (s || '').trim().toLowerCase();
+
+        const staticIds = new Set(staticList.map(s => s.id));
+        const staticNames = new Set(staticList.map(s => norm(s.nome)));
+
+        const localById = new Map<number, Produto>(local.map(i => [i.id, i]));
+        const localByName = new Map<string, Produto>();
+        for (const l of local) {
+            const key = norm(l.nome);
+            if (!localByName.has(key)) localByName.set(key, l);
+        }
+
+        const canonical: Produto[] = [];
+        for (const s of staticList) {
+            if (deleted.has(s.id)) continue;
+            const ov = overrides[s.id] || {};
+            const fromLocalById = localById.get(s.id);
+            const fromLocalByName = localByName.get(norm(s.nome));
+            const base = fromLocalById || fromLocalByName || s;
+            const merged: Produto = {
+                id: s.id,
+                nome: typeof ov.nome !== 'undefined' ? String(ov.nome) : base.nome,
+                preco: typeof ov.preco !== 'undefined' ? Number(ov.preco) : base.preco,
+                img: typeof ov.img !== 'undefined' ? this.normalizeImgPath(ov.img) : this.normalizeImgPath(base.img)
+            };
+            canonical.push(merged);
+        }
+
+        const onlyLocal = local
+            .filter(l => !deleted.has(l.id))
+            .filter(l => !staticIds.has(l.id))
+            .filter(l => !staticNames.has(norm(l.nome)))
+            .sort((a, b) => a.id - b.id);
+
+        return [...canonical, ...onlyLocal];
+    }
+
+    private readStaticIdsCached(): number[] {
+        try {
+            return JSON.parse(sessionStorage.getItem('__static_ids__') || '[]');
+        } catch {
+            return [];
+        }
     }
 }

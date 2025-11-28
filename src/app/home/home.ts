@@ -1,7 +1,8 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
-import { ProdutoService, Produto } from '../core/service/produtos';
+import { Router, RouterLink, NavigationEnd } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { ProdutoService, Produto } from '@core/service/produtos'; 
 import { UsuarioService, Usuario } from '../core/service/usuario';
 
 declare const bootstrap: any;
@@ -17,7 +18,7 @@ interface ItemCarrinho extends Produto {
     templateUrl: './home.html',
     styleUrls: ['./home.css']
 })
-export class Home implements OnInit, AfterViewInit {
+export class Home implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('carrinhoOffcanvas', { static: false }) carrinhoOffcanvasRef!: ElementRef;
 
     produtos: Produto[] = [];
@@ -29,6 +30,8 @@ export class Home implements OnInit, AfterViewInit {
 
     public readonly currentYear: number = new Date().getFullYear();
 
+    private routerSub?: Subscription;
+
     constructor(
         private router: Router,
         private produtoService: ProdutoService,
@@ -36,39 +39,16 @@ export class Home implements OnInit, AfterViewInit {
     ) {}
 
     ngOnInit(): void {
-        this.produtoService.listar().subscribe({
-            next: (data) => {
-                this.produtos = (data || []).map(p => this.normalizeProduto(p));
-                localStorage.setItem('produtos', JSON.stringify(this.produtos));
-            },
-            error: () => {
-                const armazenados = localStorage.getItem('produtos');
-                if (armazenados) {
-                    const parsed = JSON.parse(armazenados) as Produto[];
-                    this.produtos = parsed.map(p => this.normalizeProduto(p));
-                } else {
-                    this.produtos = [
-                        { id: 1, nome: 'Carolina Herrera Bad Boy', preco: 619.90, img: 'images/badboy.png' },
-                        { id: 2, nome: 'Invictus Victory', preco: 760.00, img: 'images/invictus.png' },
-                        { id: 3, nome: 'Phantom', preco: 400.00, img: 'images/phantom.png' },
-                        { id: 4, nome: 'Granado Gardênia', preco: 599.99, img: 'images/floral.png' },
-                        { id: 5, nome: 'Essencial Único', preco: 899.90, img: 'images/amadeirado.png' },
-                        { id: 6, nome: 'Citrus Amber', preco: 699.90, img: 'images/citrico.png' },
-                        { id: 7, nome: 'Xerjoff Erba Pura', preco: 2009.90, img: 'images/luxo.png' },
-                        { id: 8, nome: 'Stronger With You', preco: 599.90, img: 'images/doce.png' },
-                        { id: 9, nome: 'Nautica Voyage', preco: 249.90, img: 'images/nautica.png' },
-                        { id: 10, nome: 'Versace Eros', preco: 399.90, img: 'images/eros.png' },
-                        { id: 11, nome: 'Bleu de Chanel', preco: 699.90, img: 'images/bleu.jpg' },
-                        { id: 12, nome: '212 VIP Black', preco: 349.90, img: 'images/212vip.png' }
-                    ];
-                    localStorage.setItem('produtos', JSON.stringify(this.produtos));
+        this.refreshProdutos();
+        this.routerSub = this.router.events.subscribe(ev => {
+            if (ev instanceof NavigationEnd) {
+                if (this.router.url === '/' || this.router.url.startsWith('/#')) {
+                    this.refreshProdutos();
                 }
             }
         });
-
         this.carrinho = this.getCarrinho();
         this.atualizarTotalLocalStorage();
-
         const sessaoRaw = localStorage.getItem('user');
         if (sessaoRaw) {
             try {
@@ -89,6 +69,15 @@ export class Home implements OnInit, AfterViewInit {
         if (this.carrinhoOffcanvasRef?.nativeElement && typeof bootstrap !== 'undefined' && bootstrap?.Offcanvas) {
             this.offcanvas = new bootstrap.Offcanvas(this.carrinhoOffcanvasRef.nativeElement);
         }
+    }
+
+    ngOnDestroy(): void {
+        if (this.routerSub) this.routerSub.unsubscribe();
+    }
+
+    @HostListener('window:focus')
+    onFocus(): void {
+        this.refreshProdutos();
     }
 
     @HostListener('document:click')
@@ -115,6 +104,18 @@ export class Home implements OnInit, AfterViewInit {
         localStorage.removeItem('user');
         this.showUserMenu = false;
         this.router.navigate(['/login']);
+    }
+
+    private refreshProdutos(): void {
+        this.produtoService.listar().subscribe({
+            next: (data) => {
+                this.produtos = (data || []).map(p => this.normalizeProduto(p));
+            },
+            error: () => {
+                const armazenados = localStorage.getItem('produtos');
+                this.produtos = armazenados ? (JSON.parse(armazenados) as Produto[]).map(p => this.normalizeProduto(p)) : [];
+            }
+        });
     }
 
     private normalizeProduto(p: Produto): Produto {
